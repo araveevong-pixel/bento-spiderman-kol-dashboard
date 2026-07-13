@@ -1,0 +1,38 @@
+name: Auto Update Dashboard
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+    inputs:
+      actual_use:
+        description: 'Actual Use (THB)'
+        required: false
+        default: ''
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install yt-dlp
+        run: pip install -U yt-dlp
+      - name: Scrape TikTok
+        run: python3 tiktok_scraper.py scrape_results.json
+      - name: Update dashboard
+        run: python3 update_dashboard.py scrape_results.json index.html
+      - name: Update Actual Use
+        if: ${{ github.event.inputs.actual_use != '' }}
+        run: python3 update_actual_use.py ${{ github.event.inputs.actual_use }} index.html
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html scrape_results.json manual_stats.json
+          git diff --staged --quiet || git commit -m "Auto-update $(date +'%Y-%m-%d %H:%M')"
+          git push
