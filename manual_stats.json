@@ -1,0 +1,73 @@
+{
+  "reach_by_group": {
+    "เพจหนัง": 0,
+    "ช่องหนัง": 0,
+    "เพจโปรโมชัน": 0,
+    "KOL รีวิว": 0
+  },
+  "fb_posts": {
+    "JUSTดูIT.": {
+      "link": "",
+      "views": 0,
+      "likes": 0,
+      "shares": 0,
+      "comments": 0
+    },
+    "khobsanung": {
+      "link": "",
+      "views": 0,
+      "likes": 0,
+      "shares": 0,
+      "comments": 0
+    },
+    "overhyp": {
+      "link": "",
+      "views": 0,
+      "likes": 0,
+      "shares": 0,
+      "comments": 0
+    },
+    "thailandsuperherofanclub": {
+      "link": "",
+      "views": 0,
+      "likes": 0,
+      "shares": 0,
+      "comments": 0
+    },
+    "marvelfanpageth": {
+      "link": "",
+      "views": 0,
+      "likes": 0,
+      "shares": 0,
+      "comments": 0
+    },
+    "salehere": {
+      "link": "",
+      "views": 0,
+      "likes": 0,
+      "shares": 0,
+      "comments": 0
+    },
+    "EventPassfanpage": {
+      "link": "",
+      "views": 0,
+      "likes": 0,
+      "shares": 0,
+      "comments": 0
+    },
+    "บอกต่อโปร_sale": {
+      "link": "",
+      "views": 0,
+      "likes": 0,
+      "shares": 0,
+      "comments": 0
+    },
+    "CheeProDeds": {
+      "link": "",
+      "views": 0,
+      "likes": 0,
+      "shares": 0,
+      "comments": 0
+    }
+  }
+}

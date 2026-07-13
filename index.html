@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BENTO × SPIDER-MAN 2026 — KOL Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<style>
+  :root{
+    --bg:#FAFAF8; --surface:#FFFFFF; --ink:#1A1A1A; --ink-2:#3D3D38; --ink-3:#63635C;
+    --line:#E8E7E2; --red:#C3322F; --red-soft:#F8E9E8; --amber:#A77B22; --amber-soft:#F5EEDC;
+    --blue:#36508C; --blue-soft:#E7ECF6; --dark:#1A1A1A; --dark-soft:#ECECE8;
+    --green:#2E7D5B; --green-soft:#E3F0E9; --radius:14px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'IBM Plex Sans Thai','Inter',sans-serif;background:var(--bg);color:var(--ink);
+    -webkit-font-smoothing:antialiased;font-size:15px;line-height:1.6}
+  .num{font-family:'Inter','IBM Plex Sans Thai',sans-serif;font-feature-settings:'tnum'}
+  .wrap{max-width:1400px;margin:0 auto;padding:0 24px}
+  .micro{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+
+  header{padding:44px 0 30px;border-bottom:1px solid var(--line)}
+  .htag{display:inline-flex;align-items:center;gap:8px;margin-bottom:16px}
+  .htag .dot{width:7px;height:7px;border-radius:50%;background:var(--red)}
+  h1{font-size:clamp(26px,4vw,40px);font-weight:700;letter-spacing:-.01em;line-height:1.2}
+  h1 .x{color:var(--red);font-weight:300;margin:0 .1em}
+  .hsub{margin-top:8px;color:var(--ink-2);font-weight:300}
+  .hmeta{display:flex;gap:26px;flex-wrap:wrap;margin-top:18px;font-size:12.5px;color:var(--ink-3)}
+  .hmeta b{color:var(--ink);font-weight:600}
+  .upd{margin-left:auto;font-size:11.5px;color:var(--ink-3)}
+
+  section{padding:32px 0;border-bottom:1px solid var(--line)}
+  .sechead{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+  .sechead h2{font-size:18px;font-weight:700}
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1px;background:var(--line);
+    border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .kc{background:var(--surface);padding:18px 20px}
+  .kc .l{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  .kc .v{font-size:25px;font-weight:700;letter-spacing:-.01em;margin-top:4px}
+  .kc .v.red{color:var(--red)} .kc .v.green{color:var(--green)}
+  .kc .s{font-size:11.5px;color:var(--ink-3)}
+  .bar{height:5px;border-radius:3px;background:var(--line);margin-top:9px;overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:3px;background:var(--red)}
+  .bar i.g{background:var(--green)}
+
+  .gt{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;background:#FCFCFA;
+     position:sticky;top:0;z-index:2}
+  th.r,td.r{text-align:right}
+  td.n{font-family:'Inter',sans-serif;font-feature-settings:'tnum';font-weight:600}
+  tbody tr:hover{background:#FCFCFA}
+  tr:last-child td{border-bottom:none}
+  tr.tot td{background:#FBF6F5;font-weight:700;border-top:2px solid var(--red)}
+  tr.tot td.n{color:var(--red)}
+  .chip{display:inline-block;font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:99px;white-space:nowrap}
+  .chip.fb{background:var(--blue-soft);color:var(--blue)}
+  .chip.tt{background:var(--dark-soft);color:var(--dark)}
+  .chip.g0{background:var(--red-soft);color:var(--red)}
+  .chip.g1{background:var(--blue-soft);color:var(--blue)}
+  .chip.g2{background:var(--amber-soft);color:var(--amber)}
+  .chip.g3{background:var(--dark-soft);color:var(--dark)}
+  .chip.ok{background:var(--green-soft);color:var(--green)}
+  .chip.no{background:#F1F0EC;color:var(--ink-3)}
+  .mini{height:5px;border-radius:3px;background:var(--line);width:90px;overflow:hidden;display:inline-block;vertical-align:middle}
+  .mini i{display:block;height:100%;background:var(--red)}
+
+  .ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+  .ctrl input,.ctrl select{font-family:inherit;font-size:13px;padding:8px 12px;border:1px solid var(--line);
+    border-radius:9px;background:var(--surface);color:var(--ink);outline:none}
+  .ctrl input:focus,.ctrl select:focus{border-color:var(--red)}
+  .ctrl input{min-width:200px}
+  .btn{font-family:inherit;font-size:12.5px;font-weight:600;padding:8px 16px;border-radius:9px;border:1px solid var(--line);
+    background:var(--surface);color:var(--ink);cursor:pointer;transition:.15s}
+  .btn:hover{border-color:var(--red);color:var(--red)}
+  .btn.p{background:var(--red);color:#fff;border-color:var(--red)}
+  .btn.p:hover{background:var(--red-dark,#8A1A17);color:#fff}
+
+  .charts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  .card h3{font-size:14px;font-weight:700;margin-bottom:14px}
+  .cwrap{height:280px;position:relative}
+
+  a.pl{color:var(--red);text-decoration:none;font-weight:600}
+  a.pl:hover{text-decoration:underline}
+
+  .modal{display:none;position:fixed;inset:0;background:rgba(26,26,26,.5);z-index:100;padding:24px;overflow:auto}
+  .modal.on{display:flex;align-items:flex-start;justify-content:center}
+  .mbox{background:var(--surface);border-radius:var(--radius);padding:26px;max-width:720px;width:100%;margin-top:40px}
+  .mbox h3{font-size:17px;font-weight:700;margin-bottom:6px}
+  .mbox p{font-size:13px;color:var(--ink-3);margin-bottom:16px}
+  .frow{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;gap:8px;align-items:center;margin-bottom:8px}
+  .frow span{font-size:12.5px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis}
+  .frow input{width:100%;font-family:'Inter';font-size:12.5px;padding:6px 8px;border:1px solid var(--line);border-radius:7px}
+  .fhead{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  textarea{width:100%;font-family:ui-monospace,monospace;font-size:11.5px;padding:10px;border:1px solid var(--line);
+    border-radius:9px;min-height:120px;background:#FCFCFA;color:var(--ink-2)}
+  .mact{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+  .note{background:var(--amber-soft);border-left:3px solid var(--amber);border-radius:0 9px 9px 0;padding:12px 14px;
+    font-size:12.5px;color:var(--ink-2);margin-bottom:16px}
+  footer{padding:28px 0 50px;font-size:12px;color:var(--ink-3)}
+  @media(max-width:900px){.charts{grid-template-columns:1fr}.frow{grid-template-columns:1fr 1fr 1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="htag"><span class="dot"></span><span class="micro">KOL Campaign Dashboard · Live</span></div>
+    <h1>BENTO<span class="x">×</span>SPIDER-MAN</h1>
+    <p class="hsub">อร่อยเด็ด เผ็ดระดับโลก · ติดตามผล KOL แบบเรียลไทม์</p>
+    <div class="hmeta">
+      <span>KOLs <b class="num" id="m-kols">52</b></span>
+      <span>Platform <b>TikTok + Facebook</b></span>
+      <span>ค่าตัวรวม <b class="num" id="m-budget">฿1,464,000</b></span>
+      <span>Agency <b>Nick &amp; Co.</b></span>
+      <span class="upd">อัปเดตอัตโนมัติทุก 30 นาที · <span id="m-time">—</span></span>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="sechead"><h2>ภาพรวม KPI</h2>
+      <div><button class="btn" onclick="openManual()">กรอกยอด Facebook / Reach</button>
+      <button class="btn" onclick="openUse()">อัปเดต Actual Use</button></div>
+    </div>
+    <div class="kpis">
+      <div class="kc"><div class="l">View · เป้า</div><div class="v num" id="k-vt">72.0M</div><div class="s">KOL ทั้ง 4 กลุ่ม</div></div>
+      <div class="kc"><div class="l">View · ทำได้</div><div class="v num red" id="k-va">0</div><div class="s" id="k-vp">0% ของเป้า</div>
+        <div class="bar"><i id="k-vb" style="width:0%"></i></div></div>
+      <div class="kc"><div class="l">Reach · เป้า</div><div class="v num" id="k-rt">13.0M</div><div class="s">กรอกจาก Ads report</div></div>
+      <div class="kc"><div class="l">Reach · ทำได้</div><div class="v num red" id="k-ra">0</div><div class="s" id="k-rp">0% ของเป้า</div>
+        <div class="bar"><i id="k-rb" style="width:0%"></i></div></div>
+      <div class="kc"><div class="l">ค่าตัว KOL</div><div class="v num" id="k-bt">฿1.46M</div><div class="s">Confirmed 52 ราย</div></div>
+      <div class="kc"><div class="l">Actual Use</div><div class="v num green" id="k-bu">฿0</div><div class="s" id="k-bp">0% ของงบ</div>
+        <div class="bar"><i class="g" id="k-bb" style="width:0%"></i></div></div>
+    </div>
+
+    <div class="kpis" style="margin-top:14px">
+      <div class="kc"><div class="l">โพสต์แล้ว</div><div class="v num" id="k-posted">0</div><div class="s" id="k-postpct">จาก 52 ราย</div></div>
+      <div class="kc"><div class="l">Likes</div><div class="v num" id="k-likes">0</div><div class="s">engagement</div></div>
+      <div class="kc"><div class="l">Comments</div><div class="v num" id="k-cmt">0</div><div class="s">comments</div></div>
+      <div class="kc"><div class="l">Shares</div><div class="v num" id="k-shr">0</div><div class="s">shares</div></div>
+      <div class="kc"><div class="l">Engagement Rate</div><div class="v num" id="k-er">0%</div><div class="s">eng / views</div></div>
+      <div class="kc"><div class="l">CPV</div><div class="v num" id="k-cpv">฿0</div><div class="s">ค่าตัว / view</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sechead"><h2>KPI รายกลุ่ม</h2><span class="micro">เป้าอิงแผน Media Kickoff</span></div>
+    <div class="gt">
+      <table>
+        <thead><tr>
+          <th>กลุ่ม</th><th>Platform</th><th class="r">KOLs</th><th class="r">ค่าตัว</th>
+          <th class="r">View เป้า</th><th class="r">View ทำได้</th><th>%</th>
+          <th class="r">Reach เป้า</th><th class="r">Reach ทำได้</th><th>%</th>
+        </tr></thead>
+        <tbody id="grp-body"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sechead"><h2>กราฟ</h2></div>
+    <div class="charts">
+      <div class="card"><h3>View ทำได้ vs เป้า · รายกลุ่ม</h3><div class="cwrap"><canvas id="c1"></canvas></div></div>
+      <div class="card"><h3>Top 10 KOL · View สูงสุด</h3><div class="cwrap"><canvas id="c2"></canvas></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sechead"><h2>รายชื่อ KOL</h2><span class="micro" id="cnt">—</span></div>
+    <div class="ctrl">
+      <input id="q" placeholder="ค้นหาชื่อ / handle…" oninput="render()">
+      <select id="fg" onchange="render()"><option value="">ทุกกลุ่ม</option></select>
+      <select id="fa" onchange="render()"><option value="">ทุกสาย</option></select>
+      <select id="ft" onchange="render()"><option value="">ทุก Tier</option></select>
+      <select id="fp" onchange="render()"><option value="">ทุก Platform</option><option>TikTok</option><option>Facebook</option></select>
+      <select id="fs" onchange="render()"><option value="">ทั้งหมด</option><option value="1">โพสต์แล้ว</option><option value="0">ยังไม่โพสต์</option></select>
+      <select id="sort" onchange="render()">
+        <option value="views">เรียง: View</option><option value="budget">เรียง: ค่าตัว</option>
+        <option value="followers">เรียง: Followers</option><option value="er">เรียง: ER</option>
+      </select>
+    </div>
+    <div class="gt">
+      <table>
+        <thead><tr>
+          <th>KOL</th><th>Platform</th><th>กลุ่ม</th><th>สาย</th><th>Tier</th>
+          <th class="r">Followers</th><th class="r">ค่าตัว</th><th class="r">Views</th>
+          <th class="r">Likes</th><th class="r">Comments</th><th class="r">Shares</th>
+          <th class="r">ER</th><th class="r">CPV</th><th>สถานะ</th><th>โพสต์</th>
+        </tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap">BENTO × SPIDER-MAN 2026 · KOL Dashboard · TikTok อัปเดตอัตโนมัติทุก 30 นาที · Facebook + Reach กรอกมือ</div></footer>
+
+<!-- MANUAL MODAL -->
+<div class="modal" id="mManual"><div class="mbox">
+  <h3>กรอกยอด Facebook &amp; Reach</h3>
+  <p>TikTok ดึงยอดอัตโนมัติ · Facebook กับ Reach ต้องกรอกมือจาก Ads Manager</p>
+  <div class="note">กรอกเสร็จกด <b>คัดลอก JSON</b> แล้วเอาไปวางทับไฟล์ <b>manual_stats.json</b> บน GitHub → บันทึก แล้วรอ CI รอบถัดไป (หรือกด Run workflow)</div>
+  <div style="margin-bottom:18px">
+    <div class="micro" style="margin-bottom:8px">Reach รายกลุ่ม (จาก Ads report)</div>
+    <div id="reachRows"></div>
+  </div>
+  <div>
+    <div class="micro" style="margin-bottom:8px">ยอดโพสต์ Facebook</div>
+    <div class="frow fhead"><span>เพจ</span><span>Views</span><span>Likes</span><span>Comments</span><span>Shares</span></div>
+    <div id="fbRows"></div>
+  </div>
+  <textarea id="jsonOut" style="margin-top:14px" readonly></textarea>
+  <div class="mact">
+    <button class="btn" onclick="closeM('mManual')">ปิด</button>
+    <button class="btn p" onclick="copyJson()">คัดลอก JSON</button>
+  </div>
+</div></div>
+
+<!-- ACTUAL USE MODAL -->
+<div class="modal" id="mUse"><div class="mbox" style="max-width:420px">
+  <h3>อัปเดตยอด Actual Use</h3>
+  <p>งบที่ใช้จริงไปแล้ว (บาท)</p>
+  <input id="useInput" type="number" style="width:100%;font-family:'Inter';font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:9px">
+  <div class="mact">
+    <button class="btn" onclick="closeM('mUse')">ยกเลิก</button>
+    <button class="btn p" onclick="saveUse()">บันทึก</button>
+  </div>
+</div></div>
+
+<script>
+// ===== DATA (auto-updated by CI) =====
+const KOL_DATA = [
+  { username: 'JUSTดูIT.', displayName: 'JUSTดูIT.', tier: 'Mega', platform: 'Facebook', category: 'เพจหนัง', angle: 'Movie / Pop-Culture', gender: '-', followers: 1900000, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 35000 },
+  { username: 'khobsanung', displayName: 'ขอบสหนัง', tier: 'Mega', platform: 'Facebook', category: 'เพจหนัง', angle: 'Movie / Pop-Culture', gender: '-', followers: 1900000, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 70000 },
+  { username: 'overhyp', displayName: 'อวยไส้แตกแหกไส้ฉีก', tier: 'Mega', platform: 'Facebook', category: 'เพจหนัง', angle: 'Movie / Pop-Culture', gender: '-', followers: 1300000, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 90000 },
+  { username: 'thailandsuperherofanclub', displayName: 'สมาคมผู้คลั่งไคล้ Super Hero', tier: 'Macro', platform: 'Facebook', category: 'เพจหนัง', angle: 'Movie / Pop-Culture', gender: '-', followers: 777000, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 20000 },
+  { username: 'marvelfanpageth', displayName: 'Marvel Thailand Fanpage', tier: 'Macro', platform: 'Facebook', category: 'เพจหนัง', angle: 'Movie / Pop-Culture', gender: '-', followers: 622000, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 23000 },
+  { username: 'pizza_movie', displayName: 'Tiktok pizza_movie', tier: 'Mega', platform: 'TikTok', category: 'ช่องหนัง', angle: 'Movie / Pop-Culture', gender: '-', followers: 3500000, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 1, kpi_views: 0, posted: true, link: 'https://vt.tiktok.com/ZSCwM1ArU/', budget: 80000 },
+  { username: 'airer.thatchy', displayName: 'airer.thatchy', tier: 'Mid', platform: 'TikTok', category: 'ช่องหนัง', angle: 'Movie / Pop-Culture', gender: '-', followers: 220600, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 1, kpi_views: 0, posted: true, link: 'https://vt.tiktok.com/ZSCwdNjVw/', budget: 25000 },
+  { username: 'catponsuda', displayName: 'catponsuda', tier: 'Micro', platform: 'TikTok', category: 'ช่องหนัง', angle: 'Movie / Pop-Culture', gender: '-', followers: 59000, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 12000 },
+  { username: 'salehere', displayName: 'salehere', tier: 'Mega', platform: 'Facebook', category: 'เพจโปรโมชัน', angle: 'Promo/Gaming', gender: '-', followers: 8600000, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 60000 },
+  { username: 'EventPassfanpage', displayName: 'Eventpass', tier: 'Mega', platform: 'Facebook', category: 'เพจโปรโมชัน', angle: 'Promo/Gaming', gender: '-', followers: 4099999, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 60000 },
+  { username: 'บอกต่อโปร_sale', displayName: 'บอกต่อโปร sale', tier: 'Macro', platform: 'Facebook', category: 'เพจโปรโมชัน', angle: 'Promo/Gaming', gender: '-', followers: 995000, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 55000 },
+  { username: 'CheeProDeds', displayName: 'เพจ แท็กเพื่อนบอกโปร Promotion', tier: 'Mega', platform: 'Facebook', category: 'เพจโปรโมชัน', angle: 'Promo/Gaming', gender: '-', followers: 5000000, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 55000 },
+  { username: 'jjayallday', displayName: 'jjayallday', tier: 'Mid', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 425200, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 33000 },
+  { username: 'mickeymooze', displayName: 'mickeymooze', tier: 'Nano', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 7090, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 1, kpi_views: 0, posted: true, link: 'https://vt.tiktok.com/ZSXepR48D/', budget: 9000 },
+  { username: 'tangswap', displayName: 'tangswap', tier: 'Nano', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 7914, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 9000 },
+  { username: 'foursleep_zzz', displayName: 'foursleep_zzz', tier: 'Micro', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 64200, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 9000 },
+  { username: 'p_waneng', displayName: 'p_waneng', tier: 'Nano', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 4649, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 9000 },
+  { username: '100lowteens', displayName: '100lowteens', tier: 'Macro', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 773900, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 26000 },
+  { username: 'pankpanq', displayName: 'pankpanq', tier: 'Nano', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 3712, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 9000 },
+  { username: 'googidd', displayName: 'googidd', tier: 'Mid', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 426300, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 1, kpi_views: 0, posted: true, link: 'https://vt.tiktok.com/ZSCTWCQ3Q/', budget: 35000 },
+  { username: 'leopakin.finsudsud', displayName: 'leopakin.finsudsud', tier: 'Nano', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 7643, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 1, kpi_views: 0, posted: true, link: 'https://vt.tiktok.com/ZSXesTBBC/', budget: 9000 },
+  { username: 'the.oichyzchan.official', displayName: 'oichyzchan', tier: 'Mid', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 125500, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 1, kpi_views: 0, posted: true, link: 'https://vt.tiktok.com/ZSXeQ1Ksw/', budget: 9000 },
+  { username: 'sunyo_naklaahan', displayName: 'sunyo_naklaahan', tier: 'Micro', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 64200, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 9000 },
+  { username: 'atomkittinan', displayName: 'atomkittinan', tier: 'Micro', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 56600, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 1, kpi_views: 0, posted: true, link: 'https://vt.tiktok.com/ZSCEdQQaF/', budget: 12000 },
+  { username: 'bu_tsp', displayName: 'bu_tsp', tier: 'Micro', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 11500, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 9000 },
+  { username: 'tawanboyzs', displayName: 'tawanboyzs', tier: 'Mega', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Lifestyle / Daily Snack', gender: '-', followers: 1900000, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 80000 },
+  { username: 'tairichkun', displayName: 'tairichkun', tier: 'Mid', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Lifestyle / Daily Snack', gender: '-', followers: 111000, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 13000 },
+  { username: 'dreambarcodezaa', displayName: 'dreambarcodezaa', tier: 'Mega', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Lifestyle / Daily Snack', gender: '-', followers: 5700000, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 50000 },
+  { username: 'lleowenn', displayName: 'lleowenn', tier: 'Mid', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Lifestyle / Daily Snack', gender: '-', followers: 376400, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 32000 },
+  { username: 'tuipnx', displayName: 'tuipnx', tier: 'Mid', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Lifestyle / Daily Snack', gender: '-', followers: 416400, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 26000 },
+  { username: 'ccfolk', displayName: 'ccfolk', tier: 'Micro', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Lifestyle / Daily Snack', gender: '-', followers: 75200, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 11000 },
+  { username: 'pakkaput17', displayName: 'pakkaput17', tier: 'Mid', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Lifestyle / Daily Snack', gender: '-', followers: 371300, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 9000 },
+  { username: 'domon_taiyang', displayName: 'Domon', tier: 'Mid', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Lifestyle / Daily Snack', gender: '-', followers: 320000, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 1, kpi_views: 0, posted: true, link: 'https://vt.tiktok.com/ZSXeqfxq2/', budget: 13000 },
+  { username: 'peapeel', displayName: 'peapeel', tier: 'Mid', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Lifestyle / Daily Snack', gender: '-', followers: 453500, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 32000 },
+  { username: 'toast.aukkarat', displayName: 'toast.aukkarat', tier: 'Macro', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Lifestyle / Daily Snack', gender: '-', followers: 837600, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 1, kpi_views: 0, posted: true, link: 'https://vt.tiktok.com/ZSXemMa64/', budget: 32000 },
+  { username: 'p_feelshort', displayName: 'พิฟีลช๊อต', tier: 'Micro', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Lifestyle / Daily Snack', gender: '-', followers: 13700, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 9000 },
+  { username: 'platusongkheng', displayName: 'ปลาทูสองเข่ง', tier: 'Mega', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Lifestyle / Daily Snack', gender: '-', followers: 1600000, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 19000 },
+  { username: 'dinomark', displayName: 'dinomark', tier: 'Micro', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 46600, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 9000 },
+  { username: 'keng.kradeng', displayName: 'keng.kradeng', tier: 'Micro', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 82900, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 9000 },
+  { username: 'kun_pnk', displayName: 'kun_pnk', tier: 'Macro', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 633400, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 9000 },
+  { username: 'tortorpardak', displayName: 'tortorpardak', tier: 'Micro', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 17900, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 9000 },
+  { username: 'kingkongkub', displayName: 'Kongwpm', tier: 'Mega', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 3700000, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 130000 },
+  { username: 'got012st', displayName: 'got01st', tier: 'Micro', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Lifestyle / Daily Snack', gender: '-', followers: 43600, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 9000 },
+  { username: 'nutcheckpro', displayName: 'nut_checkincheckpro', tier: 'Micro', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 55000, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 9000 },
+  { username: 'itsoakntk', displayName: 'itsoakntk', tier: 'Mid', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Spicy Food / Eating Show', gender: '-', followers: 112400, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 23000 },
+  { username: 'h.m.o.n.g', displayName: 'h.m.o.n.g', tier: 'Micro', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Lifestyle / Daily Snack', gender: '-', followers: 86300, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 9000 },
+  { username: 'bavinciplay', displayName: 'bavinciplay', tier: 'Mid', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Lifestyle / Daily Snack', gender: '-', followers: 423900, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 1, kpi_views: 0, posted: true, link: 'https://vt.tiktok.com/ZSXerRkAD/', budget: 17000 },
+  { username: 'chatmong_m', displayName: 'chatmong_m', tier: 'Mid', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Gaming', gender: '-', followers: 145600, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 25000 },
+  { username: 'icepng71', displayName: 'icepng71', tier: 'Micro', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Gaming', gender: '-', followers: 31300, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 22000 },
+  { username: 'phetbandaiyard', displayName: 'phetbandaiyard', tier: 'Mid', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Gaming', gender: '-', followers: 391700, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 30000 },
+  { username: 'night265', displayName: 'night265', tier: 'Macro', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Gaming', gender: '-', followers: 934800, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 28000 },
+  { username: 'otabest', displayName: 'otabest', tier: 'Mid', platform: 'TikTok', category: 'KOL รีวิว', angle: 'Gaming', gender: '-', followers: 356700, views: 0, likes: 0, shares: 0, comments: 0, saves: 0, posts: 0, kpi_views: 0, posted: false, link: '', budget: 28000 }
+];
+
+const CAMPAIGN_ACTUAL_USE_DEFAULT = 0.0;
+
+const MANUAL_STATS = {"reach_by_group": {"เพจหนัง": 0, "ช่องหนัง": 0, "เพจโปรโมชัน": 0, "KOL รีวิว": 0}, "fb_posts": {"JUSTดูIT.": {"link": "", "views": 0, "likes": 0, "shares": 0, "comments": 0}, "khobsanung": {"link": "", "views": 0, "likes": 0, "shares": 0, "comments": 0}, "overhyp": {"link": "", "views": 0, "likes": 0, "shares": 0, "comments": 0}, "thailandsuperherofanclub": {"link": "", "views": 0, "likes": 0, "shares": 0, "comments": 0}, "marvelfanpageth": {"link": "", "views": 0, "likes": 0, "shares": 0, "comments": 0}, "salehere": {"link": "", "views": 0, "likes": 0, "shares": 0, "comments": 0}, "EventPassfanpage": {"link": "", "views": 0, "likes": 0, "shares": 0, "comments": 0}, "บอกต่อโปร_sale": {"link": "", "views": 0, "likes": 0, "shares": 0, "comments": 0}, "CheeProDeds": {"link": "", "views": 0, "likes": 0, "shares": 0, "comments": 0}}};
+
+const KPI_TARGET = {
+  "เพจหนัง":      {reach:1500000, view:5000000,  platform:"Facebook"},
+  "ช่องหนัง":     {reach:1500000, view:7000000,  platform:"TikTok"},
+  "เพจโปรโมชัน":  {reach:2000000, view:10000000, platform:"Facebook"},
+  "KOL รีวิว":    {reach:8000000, view:50000000, platform:"TikTok"}
+};
+const GROUPS = ["เพจหนัง","ช่องหนัง","เพจโปรโมชัน","KOL รีวิว"];
+const REPO = "araveevong-pixel/bento-spiderman-kol-dashboard";
+
+// ===== helpers =====
+const fmt = n => (n||0).toLocaleString('th-TH');
+const fmtM = n => n>=1e6 ? (n/1e6).toFixed(1)+'M' : n>=1e3 ? (n/1e3).toFixed(0)+'K' : String(n||0);
+const pct = (a,b) => b>0 ? Math.round(a/b*100) : 0;
+const gi = g => Math.max(0, GROUPS.indexOf(g));
+
+// merge manual FB stats into KOL_DATA
+KOL_DATA.forEach(k=>{
+  const m = (MANUAL_STATS.fb_posts||{})[k.username];
+  if(m){
+    k.views=m.views||0; k.likes=m.likes||0; k.comments=m.comments||0; k.shares=m.shares||0;
+    if(m.link){ k.link=m.link; k.posted=true; k.posts=1; }
+    if(k.views>0){ k.posted=true; k.posts=1; }
+  }
+});
+
+const eng = k => (k.likes||0)+(k.comments||0)+(k.shares||0)+(k.saves||0);
+const erOf = k => k.views>0 ? eng(k)/k.views*100 : 0;
+const cpvOf = k => k.views>0 ? k.budget/k.views : 0;
+
+// ===== KPI =====
+function calcKPI(){
+  const vT = GROUPS.reduce((s,g)=>s+KPI_TARGET[g].view,0);
+  const rT = GROUPS.reduce((s,g)=>s+KPI_TARGET[g].reach,0);
+  const vA = KOL_DATA.reduce((s,k)=>s+(k.views||0),0);
+  const rA = GROUPS.reduce((s,g)=>s+((MANUAL_STATS.reach_by_group||{})[g]||0),0);
+  const bT = KOL_DATA.reduce((s,k)=>s+(k.budget||0),0);
+  const bU = Number(localStorage.getItem(REPO+':use') ?? CAMPAIGN_ACTUAL_USE_DEFAULT) || 0;
+  const posted = KOL_DATA.filter(k=>k.posted).length;
+  const L=KOL_DATA.reduce((s,k)=>s+(k.likes||0),0), C=KOL_DATA.reduce((s,k)=>s+(k.comments||0),0),
+        S=KOL_DATA.reduce((s,k)=>s+(k.shares||0),0);
+  const ER = vA>0 ? ((L+C+S)/vA*100) : 0;
+  const CPV = vA>0 ? bT/vA : 0;
+
+  document.getElementById('k-vt').textContent = fmtM(vT);
+  document.getElementById('k-va').textContent = fmt(vA);
+  document.getElementById('k-vp').textContent = pct(vA,vT)+'% ของเป้า';
+  document.getElementById('k-vb').style.width = Math.min(100,pct(vA,vT))+'%';
+  document.getElementById('k-rt').textContent = fmtM(rT);
+  document.getElementById('k-ra').textContent = fmt(rA);
+  document.getElementById('k-rp').textContent = pct(rA,rT)+'% ของเป้า';
+  document.getElementById('k-rb').style.width = Math.min(100,pct(rA,rT))+'%';
+  document.getElementById('k-bt').textContent = '฿'+(bT/1e6).toFixed(2)+'M';
+  document.getElementById('k-bu').textContent = '฿'+fmt(bU);
+  document.getElementById('k-bp').textContent = pct(bU,bT)+'% ของงบ';
+  document.getElementById('k-bb').style.width = Math.min(100,pct(bU,bT))+'%';
+  document.getElementById('k-posted').textContent = posted;
+  document.getElementById('k-postpct').textContent = 'จาก '+KOL_DATA.length+' ราย ('+pct(posted,KOL_DATA.length)+'%)';
+  document.getElementById('k-likes').textContent = fmt(L);
+  document.getElementById('k-cmt').textContent = fmt(C);
+  document.getElementById('k-shr').textContent = fmt(S);
+  document.getElementById('k-er').textContent = ER.toFixed(2)+'%';
+  document.getElementById('k-cpv').textContent = '฿'+CPV.toFixed(3);
+  document.getElementById('m-kols').textContent = KOL_DATA.length;
+  document.getElementById('m-budget').textContent = '฿'+fmt(bT);
+  document.getElementById('m-time').textContent = new Date().toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'});
+}
+
+// ===== group table =====
+function groupTable(){
+  let h='', tv=0,ta=0,tr=0,tra=0,tb=0,tk=0;
+  GROUPS.forEach((g,i)=>{
+    const ks=KOL_DATA.filter(k=>k.category===g);
+    const va=ks.reduce((s,k)=>s+(k.views||0),0);
+    const ra=(MANUAL_STATS.reach_by_group||{})[g]||0;
+    const b=ks.reduce((s,k)=>s+(k.budget||0),0);
+    const T=KPI_TARGET[g];
+    tv+=T.view; ta+=va; tr+=T.reach; tra+=ra; tb+=b; tk+=ks.length;
+    h+=`<tr>
+      <td><span class="chip g${i}">${g}</span></td>
+      <td><span class="chip ${T.platform==='TikTok'?'tt':'fb'}">${T.platform}</span></td>
+      <td class="r n">${ks.length}</td>
+      <td class="r n">฿${fmt(b)}</td>
+      <td class="r n">${fmtM(T.view)}</td>
+      <td class="r n">${fmt(va)}</td>
+      <td><span class="mini"><i style="width:${Math.min(100,pct(va,T.view))}%"></i></span> <b class="num">${pct(va,T.view)}%</b></td>
+      <td class="r n">${fmtM(T.reach)}</td>
+      <td class="r n">${fmt(ra)}</td>
+      <td><span class="mini"><i style="width:${Math.min(100,pct(ra,T.reach))}%"></i></span> <b class="num">${pct(ra,T.reach)}%</b></td>
+    </tr>`;
+  });
+  h+=`<tr class="tot"><td>รวม</td><td></td><td class="r n">${tk}</td><td class="r n">฿${fmt(tb)}</td>
+    <td class="r n">${fmtM(tv)}</td><td class="r n">${fmt(ta)}</td><td class="n">${pct(ta,tv)}%</td>
+    <td class="r n">${fmtM(tr)}</td><td class="r n">${fmt(tra)}</td><td class="n">${pct(tra,tr)}%</td></tr>`;
+  document.getElementById('grp-body').innerHTML=h;
+}
+
+// ===== filters + table =====
+function initFilters(){
+  const g=document.getElementById('fg'), a=document.getElementById('fa'), t=document.getElementById('ft');
+  GROUPS.forEach(x=>g.insertAdjacentHTML('beforeend',`<option>${x}</option>`));
+  [...new Set(KOL_DATA.map(k=>k.angle))].sort().forEach(x=>a.insertAdjacentHTML('beforeend',`<option>${x}</option>`));
+  ['Mega','Macro','Mid','Micro','Nano'].forEach(x=>t.insertAdjacentHTML('beforeend',`<option>${x}</option>`));
+}
+function render(){
+  const q=document.getElementById('q').value.toLowerCase();
+  const fg=document.getElementById('fg').value, fa=document.getElementById('fa').value,
+        ft=document.getElementById('ft').value, fp=document.getElementById('fp').value,
+        fs=document.getElementById('fs').value, sort=document.getElementById('sort').value;
+  let rows=KOL_DATA.filter(k=>
+    (!q || k.displayName.toLowerCase().includes(q) || k.username.toLowerCase().includes(q)) &&
+    (!fg || k.category===fg) && (!fa || k.angle===fa) && (!ft || k.tier===ft) &&
+    (!fp || k.platform===fp) && (fs===''||String(k.posted?1:0)===fs));
+  rows.sort((a,b)=> sort==='er' ? erOf(b)-erOf(a) : (b[sort]||0)-(a[sort]||0));
+  document.getElementById('cnt').textContent = rows.length+' / '+KOL_DATA.length+' ราย';
+  document.getElementById('tb').innerHTML = rows.map(k=>`<tr>
+    <td><b>${k.displayName}</b><br><span style="font-size:11px;color:var(--ink-3)">@${k.username}</span></td>
+    <td><span class="chip ${k.platform==='TikTok'?'tt':'fb'}">${k.platform}</span></td>
+    <td><span class="chip g${gi(k.category)}">${k.category}</span></td>
+    <td style="font-size:12px;color:var(--ink-2)">${k.angle}</td>
+    <td>${k.tier}</td>
+    <td class="r n">${fmt(k.followers)}</td>
+    <td class="r n">฿${fmt(k.budget)}</td>
+    <td class="r n">${fmt(k.views)}</td>
+    <td class="r n">${fmt(k.likes)}</td>
+    <td class="r n">${fmt(k.comments)}</td>
+    <td class="r n">${fmt(k.shares)}</td>
+    <td class="r n">${erOf(k).toFixed(1)}%</td>
+    <td class="r n">${k.views>0?'฿'+cpvOf(k).toFixed(3):'—'}</td>
+    <td><span class="chip ${k.posted?'ok':'no'}">${k.posted?'โพสต์แล้ว':'รอโพสต์'}</span></td>
+    <td>${k.link?`<a class="pl" href="${k.link}" target="_blank">เปิด ↗</a>`:'—'}</td>
+  </tr>`).join('') || `<tr><td colspan="15" style="text-align:center;color:var(--ink-3);padding:30px">ไม่พบข้อมูล</td></tr>`;
+}
+
+// ===== charts =====
+let ch1,ch2;
+function charts(){
+  const va=GROUPS.map(g=>KOL_DATA.filter(k=>k.category===g).reduce((s,k)=>s+(k.views||0),0));
+  const vt=GROUPS.map(g=>KPI_TARGET[g].view);
+  if(ch1)ch1.destroy();
+  ch1=new Chart(document.getElementById('c1'),{type:'bar',data:{labels:GROUPS,
+    datasets:[{label:'เป้า',data:vt,backgroundColor:'#E8E7E2',borderRadius:5},
+              {label:'ทำได้',data:va,backgroundColor:'#C3322F',borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{font:{family:'IBM Plex Sans Thai',size:11}}}},
+      scales:{y:{beginAtZero:true,ticks:{callback:v=>fmtM(v),font:{family:'Inter',size:10}},grid:{color:'#F0EFEB'}},
+              x:{ticks:{font:{family:'IBM Plex Sans Thai',size:10}},grid:{display:false}}}}});
+  const top=[...KOL_DATA].filter(k=>k.views>0).sort((a,b)=>b.views-a.views).slice(0,10);
+  if(ch2)ch2.destroy();
+  ch2=new Chart(document.getElementById('c2'),{type:'bar',data:{
+    labels:top.map(k=>k.displayName.length>16?k.displayName.slice(0,16)+'…':k.displayName),
+    datasets:[{label:'Views',data:top.map(k=>k.views),backgroundColor:'#C3322F',borderRadius:5}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{beginAtZero:true,ticks:{callback:v=>fmtM(v),font:{family:'Inter',size:10}},grid:{color:'#F0EFEB'}},
+              y:{ticks:{font:{family:'IBM Plex Sans Thai',size:10}},grid:{display:false}}}}});
+}
+
+// ===== modals =====
+function openM(id){document.getElementById(id).classList.add('on')}
+function closeM(id){document.getElementById(id).classList.remove('on')}
+function openUse(){document.getElementById('useInput').value=Number(localStorage.getItem(REPO+':use')??CAMPAIGN_ACTUAL_USE_DEFAULT)||0;openM('mUse')}
+function saveUse(){localStorage.setItem(REPO+':use',document.getElementById('useInput').value||0);closeM('mUse');calcKPI()}
+
+function openManual(){
+  const rh=GROUPS.map(g=>`<div class="frow" style="grid-template-columns:1.4fr 1fr">
+    <span>${g}</span><input type="number" data-reach="${g}" value="${(MANUAL_STATS.reach_by_group||{})[g]||0}" oninput="buildJson()"></div>`).join('');
+  document.getElementById('reachRows').innerHTML=rh;
+  const fb=KOL_DATA.filter(k=>k.platform==='Facebook');
+  document.getElementById('fbRows').innerHTML=fb.map(k=>{
+    const m=(MANUAL_STATS.fb_posts||{})[k.username]||{};
+    return `<div class="frow"><span title="${k.displayName}">${k.displayName}</span>
+      <input type="number" data-fb="${k.username}" data-f="views" value="${m.views||0}" oninput="buildJson()">
+      <input type="number" data-fb="${k.username}" data-f="likes" value="${m.likes||0}" oninput="buildJson()">
+      <input type="number" data-fb="${k.username}" data-f="comments" value="${m.comments||0}" oninput="buildJson()">
+      <input type="number" data-fb="${k.username}" data-f="shares" value="${m.shares||0}" oninput="buildJson()"></div>`;
+  }).join('');
+  buildJson(); openM('mManual');
+}
+function buildJson(){
+  const o={reach_by_group:{},fb_posts:{}};
+  document.querySelectorAll('[data-reach]').forEach(i=>o.reach_by_group[i.dataset.reach]=Number(i.value)||0);
+  document.querySelectorAll('[data-fb]').forEach(i=>{
+    const u=i.dataset.fb; o.fb_posts[u]=o.fb_posts[u]||{link:((MANUAL_STATS.fb_posts||{})[u]||{}).link||''};
+    o.fb_posts[u][i.dataset.f]=Number(i.value)||0;
+  });
+  document.getElementById('jsonOut').value=JSON.stringify(o,null,2);
+}
+function copyJson(){
+  const t=document.getElementById('jsonOut'); t.select(); navigator.clipboard.writeText(t.value);
+  window.open('https://github.com/'+REPO+'/edit/main/manual_stats.json','_blank');
+}
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('on')}));
+
+// ===== init =====
+initFilters(); calcKPI(); groupTable(); render(); charts();
+</script>
+</body>
+</html>
