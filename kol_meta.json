@@ -8,7 +8,7 @@
       "angle": "Movie / Pop-Culture",
       "followers": 1900000,
       "budget": 35000,
-      "link": "https://www.facebook.com/share/p/194mJAdjhw/?mibextid=wwXIfr"
+      "link": ""
     },
     "khobsanung": {
       "displayName": "ขอบสหนัง",
@@ -28,7 +28,7 @@
       "angle": "Movie / Pop-Culture",
       "followers": 1300000,
       "budget": 90000,
-      "link": "https://www.facebook.com/share/p/1ECsBeLBuK/"
+      "link": ""
     },
     "thailandsuperherofanclub": {
       "displayName": "สมาคมผู้คลั่งไคล้ Super Hero",
@@ -98,7 +98,7 @@
       "angle": "Promo/Gaming",
       "followers": 4099999,
       "budget": 60000,
-      "link": "https://www.facebook.com/share/p/1DTz9Gd4xJ/"
+      "link": ""
     },
     "บอกต่อโปร_sale": {
       "displayName": "บอกต่อโปร sale",
@@ -108,7 +108,7 @@
       "angle": "Promo/Gaming",
       "followers": 995000,
       "budget": 55000,
-      "link": "https://www.facebook.com/BOHKTOHprosaled/posts/1569635504525304"
+      "link": ""
     },
     "CheeProDeds": {
       "displayName": "เพจ แท็กเพื่อนบอกโปร Promotion",
@@ -128,7 +128,7 @@
       "angle": "Spicy Food / Eating Show",
       "followers": 425200,
       "budget": 33000,
-      "link": "https://vt.tiktok.com/ZSXsFmAVP/"
+      "link": ""
     },
     "mickeymooze": {
       "displayName": "mickeymooze",
@@ -158,7 +158,7 @@
       "angle": "Spicy Food / Eating Show",
       "followers": 64200,
       "budget": 9000,
-      "link": "https://vt.tiktok.com/ZSXgp4oLN/"
+      "link": ""
     },
     "p_waneng": {
       "displayName": "p_waneng",
@@ -178,7 +178,7 @@
       "angle": "Spicy Food / Eating Show",
       "followers": 773900,
       "budget": 26000,
-      "link": "https://vt.tiktok.com/ZSXgmhRFp/"
+      "link": ""
     },
     "pankpanq": {
       "displayName": "pankpanq",
@@ -488,7 +488,7 @@
       "angle": "Gaming",
       "followers": 31300,
       "budget": 22000,
-      "link": "https://vt.tiktok.com/ZSXgsf1PN/"
+      "link": ""
     },
     "phetbandaiyard": {
       "displayName": "phetbandaiyard",
@@ -519,26 +519,6 @@
       "followers": 356700,
       "budget": 28000,
       "link": "https://vt.tiktok.com/ZSXVa41uw/"
-    },
-    "isnotfone": {
-      "displayName": "isnotfone",
-      "tier": "Macro",
-      "category": "KOL รีวิว",
-      "platform": "TikTok",
-      "angle": "Spicy Food / Eating Show",
-      "followers": 0,
-      "budget": 40000,
-      "link": "https://vt.tiktok.com/ZSXsmWs5v/"
-    },
-    "bbantun": {
-      "displayName": "bbantun",
-      "tier": "Macro",
-      "category": "KOL รีวิว",
-      "platform": "TikTok",
-      "angle": "Spicy Food / Eating Show",
-      "followers": 0,
-      "budget": 40000,
-      "link": "https://vt.tiktok.com/ZSXgnmgT9/"
     }
   }
 }
