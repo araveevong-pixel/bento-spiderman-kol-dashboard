@@ -28,11 +28,12 @@ jobs:
         run: python3 update_dashboard.py scrape_results.json index.html
       - name: Update Actual Use
         if: ${{ github.event.inputs.actual_use != '' }}
-        run: python3 update_actual_use.py ${{ github.event.inputs.actual_use }} index.html
+        run: python3 update_actual_use.py "${{ github.event.inputs.actual_use }}" index.html
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add index.html scrape_results.json manual_stats.json
           git diff --staged --quiet || git commit -m "Auto-update $(date +'%Y-%m-%d %H:%M')"
+          git pull --rebase --autostash origin main
           git push
